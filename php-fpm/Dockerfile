@@ -37,6 +37,8 @@ RUN if [ ${CHANGE_SOURCE} = true ]; then \
 RUN set -xe; \
     apt-get update -yqq && \
     pecl channel-update pecl.php.net && \
+    apt-get install --fix-missing && \
+    apt-get update && \
     apt-get install -yqq \
       apt-utils \
       gnupg2 \
@@ -55,8 +57,8 @@ RUN set -xe; \
       libzip-dev zip unzip && \
       if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
         docker-php-ext-configure zip; \
-      else \
-        docker-php-ext-configure zip --with-libzip; \
+      # else \
+      #  docker-php-ext-configure zip --with-libzip; \
       fi && \
       # Install the zip extension
       docker-php-ext-install zip && \
