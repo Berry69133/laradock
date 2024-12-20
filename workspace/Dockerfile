@@ -1617,6 +1617,19 @@ RUN if [ ${INSTALL_PROTOC} = true ]; then \
 RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
 
 ###########################################################################
+# Oh My ZSH! Custom Configuration for root
+###########################################################################
+
+USER root
+COPY ./oh-my-zsh-conf.sh /root/.app-zshrc 
+COPY ./p10k-conf.zsh /root/.app-p10k.zsh
+RUN apt install -y zsh && \
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --keep-zshrc" && \
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /root/.oh-my-zsh/custom/themes/powerlevel10k && \
+  cp /root/.app-zshrc /root/.zshrc && \
+  cp /root/.app-p10k.zsh /root/.p10k.zsh
+
+###########################################################################
 # Oh My ZSH!
 ###########################################################################
 

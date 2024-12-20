@@ -162,5 +162,5 @@ function _artisan()
 	COMPREPLY=(`compgen -W "$COMMANDS" -- "${COMP_WORDS[COMP_CWORD]}"`)
 	return 0
 }
-complete -F _artisan art
-complete -F _artisan artisan
+#complete -F _artisan art
+#complete -F _artisan artisan
