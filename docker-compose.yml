@@ -2246,3 +2246,24 @@ services:
       networks:
         - frontend
         - backend
+        
+### vsftpd ##################################################
+    ftp:
+      image: fauria/vsftpd
+      container_name: ftp
+      restart: always
+      ports:
+        - 21000-21010:21000-21010
+        - 21:21
+      environment:
+        - FTP_USER=ftpuser
+        - FTP_PASS=ftppassword
+        - PASV_ENABLE=YES
+        - PASV_ADDRESS=172.19.0.3
+        - PASV_MIN_PORT=21000
+        - PASV_MAX_PORT=21010
+      volumes:
+        - ./ftp:/home/vsftpd
+      networks:
+        - frontend
+        - backend

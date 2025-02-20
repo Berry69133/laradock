@@ -18,10 +18,12 @@
 /apache2/ssl/*.csr
 /apache2/ssl/*.org
 
+/ftp/
+/ftp/*
+
 /.devcontainer/*
 !/.devcontainer/devcontainer.example.json
 !/.devcontainer/docker-compose.extend-example.yml
 
 .DS_Store
-docker-compose.yml
-/ftp.*
+
