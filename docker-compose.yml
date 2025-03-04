@@ -218,6 +218,7 @@ services:
 
 ### PHP-FPM ##############################################
     php-fpm:
+      platform: linux/arm64
       restart: always
       build:
         context: ./php-fpm
@@ -329,7 +330,6 @@ services:
         - DOCKER_CERT_PATH=/certs/client
         - FAKETIME=${PHP_FPM_FAKETIME}
         - TZ=${WORKSPACE_TIMEZONE}
-
       depends_on:
         - workspace
       networks:
