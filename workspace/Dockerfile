@@ -315,13 +315,7 @@ RUN set -eux; \
     # SMB:
     ###########################################################################
     if [ ${INSTALL_SMB} = true ]; then \
-        apt-get install -yqq smbclient libsmbclient-dev php${LARADOCK_PHP_VERSION}-smbclient coreutils && \
-        if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-            pecl install smbclient; \
-        else \
-            pecl install smbclient-1.1.2; \
-        fi && \
-        echo "extension=smbclient.so" >> /etc/php/${LARADOCK_PHP_VERSION}/cli/php.ini; \
+        apt-get install -yqq smbclient php${LARADOCK_PHP_VERSION}-smbclient coreutils; \
     fi; \
     ###########################################################################
     # IMAP:
@@ -586,11 +580,10 @@ RUN set -eux; \
         echo '' | pecl -q install swoole-4.5.11; \
       elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
         echo '' | pecl -q install swoole-4.8.12; \
-      elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+      elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
         echo '' | pecl -q install swoole-5.1.2; \
       else \
-        apt-get install -yqq libbrotli-dev && \
-        echo '' | pecl -q  install swoole; \
+        echo '' | pecl -q install swoole; \
       fi; \
       echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini; \
       ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini; \
@@ -710,7 +703,7 @@ RUN if [ ${INSTALL_GRAPHVIZ} = true ]; then \
 ARG INSTALL_IONCUBE=false
 
 RUN if [ ${INSTALL_IONCUBE} = true ]; then \
-    if [ ${LARADOCK_PHP_VERSION} != "8.4" ] \
+    if [ ${LARADOCK_PHP_VERSION} != "8.3" ] \
       && [ ${LARADOCK_PHP_VERSION} != "8.0" ]; then \
       # Install the php ioncube loader
       curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
@@ -854,7 +847,7 @@ RUN if [ ${INSTALL_PNPM} = true ]; then \
     echo "" >> ~/.bashrc && \
     echo 'export PNPM_HOME="/home/laradock/.local/share/pnpm"' >> ~/.bashrc && \
     echo 'export PATH="$PNPM_HOME:$PATH"' >> ~/.bashrc && \
-    npm install -g pnpm \
+    npx pnpm add -g pnpm \
 ;fi
 
 
@@ -1204,12 +1197,14 @@ RUN if [ ${INSTALL_SYMFONY} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_PYTHON=false
+# the get-pip.py could be downloaded using curl due to a bug in M1, 
+# so I manually inserted in the workspace folder as a workaround
+COPY ./get-pip.py /root/get-pip.py 
 
 RUN if [ ${INSTALL_PYTHON} = true ]; then \
-  apt-get -y install python python-dev build-essential  \
-  && curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py  \
-  && python get-pip.py  \
-  && rm get-pip.py  \
+  apt-get -y install python python-dev build-essential \
+  && python /root/get-pip.py \ 
+  && rm -f /root/get-pip.py \
   && python -m pip install --upgrade pip  \
   && python -m pip install --upgrade virtualenv \
 ;fi
