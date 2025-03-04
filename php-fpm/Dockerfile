@@ -335,6 +335,8 @@ RUN set -eux; \
         pecl install swoole-4.5.11; \
       elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
         pecl install swoole-4.8.12; \
+      elif [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+        pecl install swoole-5.1.2; \
       else \
         pecl install swoole; \
       fi; \
@@ -671,7 +673,7 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
 ARG INSTALL_IONCUBE=false
 
 RUN if [ ${INSTALL_IONCUBE} = true ]; then \
-    if [ ${LARADOCK_PHP_VERSION} != "8.3" ] \
+    if [ ${LARADOCK_PHP_VERSION} != "8.4" ] \
       && [ ${LARADOCK_PHP_VERSION} != "8.0" ]; then \
       # Install the php ioncube loader
       curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
@@ -853,7 +855,11 @@ ARG INSTALL_SMB=false
 
 RUN if [ ${INSTALL_SMB} = true ]; then \
     apt-get install -yqq smbclient libsmbclient-dev coreutils && \
-    pecl install smbclient && \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+        pecl install smbclient; \
+    else \
+        pecl install smbclient-1.1.2; \
+    fi && \
     docker-php-ext-enable smbclient \
 ;fi
 
