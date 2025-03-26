@@ -13,7 +13,6 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 plugins=(
-  composer
   git
   bundler
   vscode
